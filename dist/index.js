@@ -3257,15 +3257,16 @@ function connect(client, args, logger) {
 function clearWorkingDir(client, dir) {
     return __awaiter(this, void 0, void 0, function* () {
         for (const file of yield (dir == null ? client.list() : client.list(dir))) {
+            console.log(file.name);
             if (file.type == 'folder') {
-                yield clearWorkingDir(client, dir);
                 if (file.name != null) {
-                    yield client.removeEmptyFolder(file.name);
+                    yield clearWorkingDir(client, dir + file.name);
+                    yield client.removeEmptyFolder(dir + file.name);
                 }
             }
             else {
                 if (file.name != null) {
-                    yield client.removeFile(file.name);
+                    yield client.removeFile(dir + file.name);
                 }
             }
         }
