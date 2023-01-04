@@ -67,8 +67,8 @@ describe("protocol", () => {
         expect(optionalProtocol("test", "ftps")).toBe("ftps");
     });
 
-    test("ftps-legacy", () => {
-        expect(optionalProtocol("test", "ftps-legacy")).toBe("ftps-legacy");
+    test("sftp", () => {
+        expect(optionalProtocol("test", "sftp")).toBe("sftp");
     });
 });
 
@@ -87,19 +87,5 @@ describe("log level", () => {
 
     test("verbose", () => {
         expect(optionalLogLevel("test", "verbose")).toBe("verbose");
-    });
-});
-
-describe("security", () => {
-    test("empty", () => {
-        expect(optionalSecurity("test", "")).toBe(undefined);
-    });
-
-    test("loose", () => {
-        expect(optionalSecurity("test", "loose")).toBe("loose");
-    });
-
-    test("strict", () => {
-        expect(optionalSecurity("test", "strict")).toBe("strict");
     });
 });

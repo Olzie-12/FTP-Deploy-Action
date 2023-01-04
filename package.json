@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SamKirkland/FTP-Deploy-Action.git"
+    "url": "git+https://github.com/Olzie-12/FTP-Deploy-Action.git"
   },
   "keywords": [
     "ftp",
@@ -19,11 +19,11 @@
     "continuous integration",
     "ftps"
   ],
-  "author": "Sam Kirkland",
+  "author": "Olzie",
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.9.1",
-    "@samkirkland/ftp-deploy": "^1.2.2",
+    "@olzie-12/ftp-deploy": "^1.2.2",
     "@types/jest": "^28.1.7",
     "jest": "^28.1.3",
     "ts-jest": "^28.0.8",

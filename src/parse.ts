@@ -22,7 +22,7 @@ export function optionalBoolean(argumentName: string, rawValue: string): boolean
     throw new Error(`${argumentName}: invalid parameter - please use a boolean, you provided "${rawValue}". Try true or false instead.`);
 }
 
-export function optionalProtocol(argumentName: string, rawValue: string): "ftp" | "ftps" | "ftps-legacy" | undefined {
+export function optionalProtocol(argumentName: string, rawValue: string): "ftp" | "ftps" | "sftp" | undefined {
     if (rawValue.length === 0) {
         return undefined;
     }
@@ -34,8 +34,8 @@ export function optionalProtocol(argumentName: string, rawValue: string): "ftp" 
     if (cleanValue === "ftps") {
         return "ftps";
     }
-    if (cleanValue === "ftps-legacy") {
-        return "ftps-legacy";
+    if (cleanValue === "sftp") {
+        return "sftp";
     }
 
     throw new Error(`${argumentName}: invalid parameter - you provided "${rawValue}". Try "ftp", "ftps", or "ftps-legacy" instead.`);
