@@ -3256,36 +3256,36 @@ function connect(client, args, logger) {
 }
 function clearWorkingDir(client, dir) {
     return __awaiter(this, void 0, void 0, function* () {
-        for (const file of yield (dir == null ? client.list() : client.list(dir))) {
-            console.log(file.name);
-            if (file.type == 'folder') {
-                if (file.name != null) {
-                    yield clearWorkingDir(client, dir + file.name);
-                    yield client.removeEmptyFolder(dir + file.name);
-                }
-            }
-            else {
-                if (file.name != null) {
-                    yield client.removeFile(dir + file.name);
-                }
-            }
-        }
+        yield client.removeFolder(dir).catch(() => { });
+        // for (const file of await (dir == null ? client.list() : client.list(dir))) {
+        //     console.log(file.name)
+        //     if (file.name == null) continue;
+        //
+        //     if (file.type == 'folder') {
+        //         await clearWorkingDir(client, dir + file.name).finally(async () => {
+        //             await client.removeEmptyFolder(dir + file.name);
+        //         });
+        //     } else {
+        //         await client.remo(dir + file.name)
+        //     }
+        // }
     });
 }
 exports.clearWorkingDir = clearWorkingDir;
 function getServerFiles(client, logger, timings, args) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield (0, syncProvider_1.ensureDir)(client, logger, timings, args["server-dir"]);
             if (args["dangerous-clean-slate"]) {
                 logger.all(`----------------------------------------------------------------`);
                 logger.all("🗑️ Removing all files on the server because 'dangerous-clean-slate' was set, this will make the deployment very slow...");
                 if (args["dry-run"] === false) {
                     yield clearWorkingDir(client, args["server-dir"]);
                 }
+                yield (0, syncProvider_1.ensureDir)(client, logger, timings, args["server-dir"]);
                 logger.all("Clear complete");
                 throw new Error("dangerous-clean-slate was run");
             }
+            yield (0, syncProvider_1.ensureDir)(client, logger, timings, args["server-dir"]);
             const serverFiles = yield downloadFileList(client, logger, args["server-dir"] + args["state-name"]);
             logger.all(`----------------------------------------------------------------`);
             logger.all(`Last published on 📅 ${new Date(serverFiles.generatedTime).toLocaleDateString(undefined, {
