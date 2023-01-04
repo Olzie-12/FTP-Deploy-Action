@@ -3198,7 +3198,12 @@ function downloadFileList(client, logger, path) {
         // note: originally this was using a writable stream instead of a buffer file
         // basic-ftp doesn't seam to close the connection when using steams over some ftps connections. This appears to be dependent on the ftp server
         const tempFileNameHack = ".ftp-deploy-sync-server-state-buffer-file---delete.json";
-        yield (0, utilities_1.retryRequest)(logger, () => __awaiter(this, void 0, void 0, function* () { return yield client.download(tempFileNameHack, path); }));
+        yield (0, utilities_1.retryRequest)(logger, () => __awaiter(this, void 0, void 0, function* () {
+            return yield client.download(tempFileNameHack, path).catch(reason => {
+                console.log(reason);
+                fs_1.default.unlinkSync(tempFileNameHack);
+            });
+        }));
         const fileAsString = fs_1.default.readFileSync(tempFileNameHack, { encoding: "utf-8" });
         const fileAsObject = JSON.parse(fileAsString);
         fs_1.default.unlinkSync(tempFileNameHack);
@@ -3280,7 +3285,7 @@ function getServerFiles(client, logger, timings, args) {
                 logger.all("Clear complete");
                 throw new Error("dangerous-clean-slate was run");
             }
-            const serverFiles = yield downloadFileList(client, logger, args["state-name"]);
+            const serverFiles = yield downloadFileList(client, logger, args["server-dir"] + args["state-name"]);
             logger.all(`----------------------------------------------------------------`);
             logger.all(`Last published on 📅 ${new Date(serverFiles.generatedTime).toLocaleDateString(undefined, {
                 weekday: "long",
@@ -3330,8 +3335,10 @@ function deploy(args, logger, timings) {
         timings.start("hash");
         const localFiles = yield (0, localFiles_1.getLocalFiles)(args);
         timings.stop("hash");
+        const client = new ftp.Client({
+            pool: 5,
+        });
         createLocalState(localFiles, logger, args);
-        const client = new ftp.Client();
         global.reconnect = function () {
             return __awaiter(this, void 0, void 0, function* () {
                 timings.start("connecting");
@@ -3606,9 +3613,7 @@ function ensureDir(client, logger, timings, folder) {
         logger.verbose(`  changing dir to ${folder}`);
         yield (0, utilities_1.retryRequest)(logger, () => __awaiter(this, void 0, void 0, function* () {
             return yield client.createFolder(folder).catch(reason => {
-                if (reason.message == "File already exists") {
-                    return;
-                }
+                console.log(reason);
             });
         }));
         logger.verbose(`  dir changed`);
@@ -3644,7 +3649,7 @@ class FTPSyncProvider {
     }
     createFolder(folderPath) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.logger.all(`creating folder "${folderPath + "/"}"`);
+            this.logger.all(`creating folder "${folderPath}"`);
             if (this.dryRun === true) {
                 return;
             }
@@ -3695,7 +3700,7 @@ class FTPSyncProvider {
             const typePast = type === "upload" ? "uploaded" : "replaced";
             this.logger.all(`${typePresent} "${filePath}"`);
             if (this.dryRun === false) {
-                yield (0, utilities_1.retryRequest)(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.upload(filePath.substring(this.serverPath.length), filePath); }));
+                yield (0, utilities_1.retryRequest)(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.upload(this.localPath + filePath.substring(this.serverPath.length), filePath); }));
             }
             this.logger.verbose(`  file ${typePast}`);
         });
@@ -3731,7 +3736,7 @@ class FTPSyncProvider {
             this.logger.all(`----------------------------------------------------------------`);
             this.logger.all(`🎉 Sync complete. Saving current server state to "${this.serverPath + this.stateName}"`);
             if (this.dryRun === false) {
-                yield (0, utilities_1.retryRequest)(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.upload(this.localPath + this.stateName, this.stateName); }));
+                yield (0, utilities_1.retryRequest)(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.upload(this.localPath + this.stateName, this.serverPath + this.stateName); }));
             }
         });
     }
