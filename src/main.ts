@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import { deploy } from "@olzie-12/ftp-deploy";
 import { IFtpDeployArguments } from "@olzie-12/ftp-deploy/dist/types";
-import { optionalInt, optionalProtocol, optionalString, optionalBoolean, optionalStringArray, optionalLogLevel} from "./parse";
+import { optionalInt, optionalProtocol, optionalString, optionalBoolean, optionalStringArray, optionalLogLevel, optionalSecurity } from "./parse";
 
 async function runDeployment() {
   try {
@@ -18,6 +18,8 @@ async function runDeployment() {
       "dangerous-clean-slate": optionalBoolean("dangerous-clean-slate", core.getInput("dangerous-clean-slate")),
       "exclude": optionalStringArray("exclude", core.getMultilineInput("exclude")),
       "log-level": optionalLogLevel("log-level", core.getInput("log-level")),
+      "security": optionalSecurity("security", core.getInput("security")),
+      "timeout": optionalInt("timeout", core.getInput("timeout"))
     };
 
     await deploy(args);
