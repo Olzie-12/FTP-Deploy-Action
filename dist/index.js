@@ -3401,7 +3401,7 @@ function deploy(args, logger, timings) {
             throw error;
         }
         finally {
-            client.disconnect();
+            setTimeout(() => __awaiter(this, void 0, void 0, function* () { return client.disconnect(); }), 100);
             timings.stop("total");
         }
         const uploadSpeed = (0, pretty_bytes_1.default)(totalBytesUploaded / (timings.getTime("upload") / 1000));
