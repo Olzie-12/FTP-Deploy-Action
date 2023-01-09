@@ -3193,23 +3193,22 @@ const pretty_bytes_1 = __importDefault(__nccwpck_require__(5168));
 const errorHandling_1 = __nccwpck_require__(1565);
 const syncProvider_1 = __nccwpck_require__(9267);
 const localFiles_1 = __nccwpck_require__(6757);
-function downloadFileList(client, logger, path) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // note: originally this was using a writable stream instead of a buffer file
-        // basic-ftp doesn't seam to close the connection when using steams over some ftps connections. This appears to be dependent on the ftp server
-        const tempFileNameHack = ".ftp-deploy-sync-server-state-buffer-file---delete.json";
-        yield (0, utilities_1.retryRequest)(logger, () => __awaiter(this, void 0, void 0, function* () {
-            return yield client.download(tempFileNameHack, path).catch(reason => {
-                console.log(reason);
-                fs_1.default.unlinkSync(tempFileNameHack);
-            });
-        }));
-        const fileAsString = fs_1.default.readFileSync(tempFileNameHack, { encoding: "utf-8" });
-        const fileAsObject = JSON.parse(fileAsString);
-        fs_1.default.unlinkSync(tempFileNameHack);
-        return fileAsObject;
-    });
-}
+// async function downloadFileList(client: ftp.Client, logger: ILogger, path: string): Promise<IFileList> {
+//     // note: originally this was using a writable stream instead of a buffer file
+//     // basic-ftp doesn't seam to close the connection when using steams over some ftps connections. This appears to be dependent on the ftp server
+//     const tempFileNameHack = ".ftp-deploy-sync-server-state-buffer-file---delete.json";
+//     await retryRequest(logger, async () => await client.download(tempFileNameHack, path).catch(reason => {
+//         console.log(reason)
+//         fs.unlinkSync(tempFileNameHack);
+//     }));
+//
+//     const fileAsString = fs.readFileSync(tempFileNameHack, {encoding: "utf-8"});
+//     const fileAsObject = JSON.parse(fileAsString) as IFileList;
+//
+//     fs.unlinkSync(tempFileNameHack);
+//
+//     return fileAsObject;
+// }
 function createLocalState(localFiles, logger, args) {
     logger.verbose(`Creating local state at ${args["local-dir"]}${args["state-name"]}`);
     fs_1.default.writeFileSync(`${args["local-dir"]}${args["state-name"]}`, JSON.stringify(localFiles, undefined, 4), { encoding: "utf8" });
@@ -3286,25 +3285,27 @@ function getServerFiles(client, logger, timings, args) {
                 throw new Error("dangerous-clean-slate was run");
             }
             yield (0, syncProvider_1.ensureDir)(client, logger, timings, args["server-dir"]);
-            const serverFiles = yield downloadFileList(client, logger, args["server-dir"] + args["state-name"]);
-            logger.all(`----------------------------------------------------------------`);
-            logger.all(`Last published on 📅 ${new Date(serverFiles.generatedTime).toLocaleDateString(undefined, {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric"
-            })}`);
+            // const serverFiles = await downloadFileList(client, logger, args["server-dir"] + args["state-name"]);
+            // logger.all(`----------------------------------------------------------------`);
+            // logger.all(`Last published on 📅 ${new Date(serverFiles.generatedTime).toLocaleDateString(undefined, {
+            //     weekday: "long",
+            //     year: "numeric",
+            //     month: "long",
+            //     day: "numeric",
+            //     hour: "numeric",
+            //     minute: "numeric"
+            // })}`);
             // apply exclude options to server
-            if (args.exclude.length > 0) {
-                const filteredData = serverFiles.data.filter((item) => (0, utilities_1.applyExcludeFilter)({
-                    path: item.name,
-                    isDirectory: () => item.type === "folder"
-                }, args.exclude));
-                serverFiles.data = filteredData;
-            }
-            return serverFiles;
+            // if (args.exclude.length > 0) {
+            //     const filteredData = serverFiles.data.filter((item) => applyExcludeFilter({
+            //         path: item.name,
+            //         isDirectory: () => item.type === "folder"
+            //     }, args.exclude));
+            //     serverFiles.data = filteredData;
+            // }
+            //
+            // return serverFiles;
+            throw new Error("dangerous-clean-slate was run");
         }
         catch (error) {
             logger.all(`----------------------------------------------------------------`);
