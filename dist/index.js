@@ -3716,24 +3716,34 @@ class FTPSyncProvider {
             this.logger.all(`----------------------------------------------------------------`);
             // create new folders
             for (const file of diffs.upload.filter(item => item.type === "folder")) {
-                yield this.createFolder(this.serverPath + file.name);
+                yield this.createFolder(this.serverPath + file.name).catch(reason => {
+                    console.log(reason);
+                });
             }
             // upload new files
             for (const file of diffs.upload.filter(item => item.type === "file").filter(item => item.name !== this.stateName)) {
-                yield this.uploadFile(this.serverPath + file.name, "upload");
+                yield this.uploadFile(this.serverPath + file.name, "upload").catch(reason => {
+                    console.log(reason);
+                });
             }
             // replace new files
             for (const file of diffs.replace.filter(item => item.type === "file").filter(item => item.name !== this.stateName)) {
                 // note: FTP will replace old files with new files. We run replacements after uploads to limit downtime
-                yield this.uploadFile(this.serverPath + file.name, "replace");
+                yield this.uploadFile(this.serverPath + file.name, "replace").catch(reason => {
+                    console.log(reason);
+                });
             }
             // delete old files
             for (const file of diffs.delete.filter(item => item.type === "file")) {
-                yield this.removeFile(this.serverPath + file.name);
+                yield this.removeFile(this.serverPath + file.name).catch(reason => {
+                    console.log(reason);
+                });
             }
             // delete old folders
             for (const file of diffs.delete.filter(item => item.type === "folder")) {
-                yield this.removeFolder(this.serverPath + file.name);
+                yield this.removeFolder(this.serverPath + file.name).catch(reason => {
+                    console.log(reason);
+                });
             }
             this.logger.all(`----------------------------------------------------------------`);
             this.logger.all(`🎉 Sync complete. Saving current server state to "${this.serverPath + this.stateName}"`);
