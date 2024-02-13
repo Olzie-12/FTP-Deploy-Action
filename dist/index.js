@@ -3615,10 +3615,10 @@ function ensureDir(client, logger, timings, folder) {
         logger.verbose(`  changing dir to ${folder}`);
         yield (0, utilities_1.retryRequest)(logger, () => __awaiter(this, void 0, void 0, function* () {
             const folders = folder.split("/").filter(folder => folder !== "");
+            var previousDir = "";
             for (const folder of folders) {
-                yield client.createFolder(folder).catch((e) => {
-                    console.log(e);
-                });
+                yield client.createFolder(previousDir + folder).catch((e) => { });
+                previousDir += folder + "/";
             }
         }));
         logger.verbose(`  dir changed`);
