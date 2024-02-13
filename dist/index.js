@@ -3656,80 +3656,60 @@ class FTPSyncProvider {
     }
     createFolder(folderPath) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                this.logger.all(`creating folder "${folderPath}"`);
-                if (this.dryRun === true) {
-                    return;
-                }
-                const path = this.getFileBreadcrumbs(folderPath + "/");
-                if (path.folders === null) {
-                    this.logger.verbose(`  no need to change dir`);
-                }
-                else {
-                    yield ensureDir(this.client, this.logger, this.timings, path.folders.join("/"));
-                }
-                this.logger.verbose(`  completed`);
+            this.logger.all(`creating folder "${folderPath}"`);
+            if (this.dryRun === true) {
+                return;
             }
-            catch (e) {
-                console.log(e);
+            const path = this.getFileBreadcrumbs(folderPath + "/");
+            if (path.folders === null) {
+                this.logger.verbose(`  no need to change dir`);
             }
+            else {
+                yield ensureDir(this.client, this.logger, this.timings, path.folders.join("/"));
+            }
+            this.logger.verbose(`  completed`);
         });
     }
     removeFile(filePath) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                this.logger.all(`removing "${filePath}"`);
-                if (this.dryRun === false) {
-                    try {
-                        yield (0, utilities_1.retryRequest)(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeFile(filePath); }));
+            this.logger.all(`removing "${filePath}"`);
+            if (this.dryRun === false) {
+                try {
+                    yield (0, utilities_1.retryRequest)(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeFile(filePath); }));
+                }
+                catch (e) {
+                    // this error is common when a file was deleted on the server directly
+                    if (e.code === types_1.ErrorCode.FileNotFoundOrNoAccess) {
+                        this.logger.standard("File not found or you don't have access to the file - skipping...");
                     }
-                    catch (e) {
-                        // this error is common when a file was deleted on the server directly
-                        if (e.code === types_1.ErrorCode.FileNotFoundOrNoAccess) {
-                            this.logger.standard("File not found or you don't have access to the file - skipping...");
-                        }
-                        else {
-                            throw e;
-                        }
+                    else {
+                        throw e;
                     }
                 }
-                this.logger.verbose(`  file removed`);
-                this.logger.verbose(`  completed`);
             }
-            catch (e) {
-                console.log(e);
-            }
+            this.logger.verbose(`  file removed`);
+            this.logger.verbose(`  completed`);
         });
     }
     removeFolder(folderPath) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const absoluteFolderPath = "/" + (this.serverPath.startsWith("./") ? this.serverPath.replace("./", "") : this.serverPath) + folderPath;
-                this.logger.all(`removing folder "${absoluteFolderPath}"`);
-                if (this.dryRun === false) {
-                    yield (0, utilities_1.retryRequest)(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeFolder(absoluteFolderPath); }));
-                }
-                this.logger.verbose(`  completed`);
+            const absoluteFolderPath = "/" + (this.serverPath.startsWith("./") ? this.serverPath.replace("./", "") : this.serverPath) + folderPath;
+            this.logger.all(`removing folder "${absoluteFolderPath}"`);
+            if (this.dryRun === false) {
+                yield (0, utilities_1.retryRequest)(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.removeFolder(absoluteFolderPath); }));
             }
-            catch (e) {
-                console.log(e);
-            }
+            this.logger.verbose(`  completed`);
         });
     }
     uploadFile(filePath, type = "upload") {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const typePresent = type === "upload" ? "uploading" : "replacing";
-                const typePast = type === "upload" ? "uploaded" : "replaced";
-                this.logger.all(`${typePresent} "${filePath}"`);
-                if (this.dryRun === false) {
-                    yield (0, utilities_1.retryRequest)(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.upload(this.localPath + filePath.substring(this.serverPath.length), filePath); }));
-                }
-                this.logger.verbose(`  file ${typePast}`);
+            const typePresent = type === "upload" ? "uploading" : "replacing";
+            const typePast = type === "upload" ? "uploaded" : "replaced";
+            this.logger.all(`${typePresent} "${filePath}"`);
+            if (this.dryRun === false) {
+                yield (0, utilities_1.retryRequest)(this.logger, () => __awaiter(this, void 0, void 0, function* () { return yield this.client.upload(this.localPath + filePath.substring(this.serverPath.length), filePath); }));
             }
-            catch (e) {
-                console.log(e);
-            }
+            this.logger.verbose(`  file ${typePast}`);
         });
     }
     syncLocalToServer(diffs) {
@@ -3741,34 +3721,24 @@ class FTPSyncProvider {
             this.logger.all(`----------------------------------------------------------------`);
             // create new folders
             for (const file of diffs.upload.filter(item => item.type === "folder")) {
-                yield this.createFolder(this.serverPath + file.name).catch(reason => {
-                    console.log(reason);
-                });
+                yield this.createFolder(this.serverPath + file.name);
             }
             // upload new files
             for (const file of diffs.upload.filter(item => item.type === "file").filter(item => item.name !== this.stateName)) {
-                yield this.uploadFile(this.serverPath + file.name, "upload").catch(reason => {
-                    console.log(reason);
-                });
+                yield this.uploadFile(this.serverPath + file.name, "upload");
             }
             // replace new files
             for (const file of diffs.replace.filter(item => item.type === "file").filter(item => item.name !== this.stateName)) {
                 // note: FTP will replace old files with new files. We run replacements after uploads to limit downtime
-                yield this.uploadFile(this.serverPath + file.name, "replace").catch(reason => {
-                    console.log(reason);
-                });
+                yield this.uploadFile(this.serverPath + file.name, "replace");
             }
             // delete old files
             for (const file of diffs.delete.filter(item => item.type === "file")) {
-                yield this.removeFile(this.serverPath + file.name).catch(reason => {
-                    console.log(reason);
-                });
+                yield this.removeFile(this.serverPath + file.name);
             }
             // delete old folders
             for (const file of diffs.delete.filter(item => item.type === "folder")) {
-                yield this.removeFolder(this.serverPath + file.name).catch(reason => {
-                    console.log(reason);
-                });
+                yield this.removeFolder(this.serverPath + file.name);
             }
             this.logger.all(`----------------------------------------------------------------`);
             this.logger.all(`🎉 Sync complete. Saving current server state to "${this.serverPath + this.stateName}"`);
