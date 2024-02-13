@@ -23,7 +23,7 @@
   "license": "MIT",
   "dependencies": {
     "@actions/core": "^1.9.1",
-    "@olzie-12/ftp-deploy": "1.2.35",
+    "@olzie-12/ftp-deploy": "1.2.36",
     "@types/jest": "^28.1.7",
     "jest": "^28.1.3",
     "ts-jest": "^28.0.8",
