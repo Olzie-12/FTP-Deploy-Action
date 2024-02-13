@@ -6783,44 +6783,33 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const ftp_deploy_1 = __nccwpck_require__(157);
 const parse_1 = __nccwpck_require__(6089);
-function runDeployment() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const args = {
-                server: core.getInput("server", { required: true }),
-                username: core.getInput("username", { required: true }),
-                password: core.getInput("password", { required: true }),
-                port: (0, parse_1.optionalInt)("port", core.getInput("port")),
-                protocol: (0, parse_1.optionalProtocol)("protocol", core.getInput("protocol")),
-                "local-dir": (0, parse_1.optionalString)(core.getInput("local-dir")),
-                "server-dir": (0, parse_1.optionalString)(core.getInput("server-dir")),
-                "state-name": (0, parse_1.optionalString)(core.getInput("state-name")),
-                "dry-run": (0, parse_1.optionalBoolean)("dry-run", core.getInput("dry-run")),
-                "dangerous-clean-slate": (0, parse_1.optionalBoolean)("dangerous-clean-slate", core.getInput("dangerous-clean-slate")),
-                "exclude": (0, parse_1.optionalStringArray)("exclude", core.getMultilineInput("exclude")),
-                "log-level": (0, parse_1.optionalLogLevel)("log-level", core.getInput("log-level")),
-                "security": (0, parse_1.optionalSecurity)("security", core.getInput("security")),
-                "timeout": (0, parse_1.optionalInt)("timeout", core.getInput("timeout"))
-            };
-            yield (0, ftp_deploy_1.deploy)(args);
-        }
-        catch (error) {
-            core.setFailed(error);
-        }
-    });
+async function runDeployment() {
+    try {
+        const args = {
+            server: core.getInput("server", { required: true }),
+            username: core.getInput("username", { required: true }),
+            password: core.getInput("password", { required: true }),
+            port: (0, parse_1.optionalInt)("port", core.getInput("port")),
+            protocol: (0, parse_1.optionalProtocol)("protocol", core.getInput("protocol")),
+            "local-dir": (0, parse_1.optionalString)(core.getInput("local-dir")),
+            "server-dir": (0, parse_1.optionalString)(core.getInput("server-dir")),
+            "state-name": (0, parse_1.optionalString)(core.getInput("state-name")),
+            "dry-run": (0, parse_1.optionalBoolean)("dry-run", core.getInput("dry-run")),
+            "dangerous-clean-slate": (0, parse_1.optionalBoolean)("dangerous-clean-slate", core.getInput("dangerous-clean-slate")),
+            "exclude": (0, parse_1.optionalStringArray)("exclude", core.getMultilineInput("exclude")),
+            "log-level": (0, parse_1.optionalLogLevel)("log-level", core.getInput("log-level")),
+            "security": (0, parse_1.optionalSecurity)("security", core.getInput("security")),
+            "timeout": (0, parse_1.optionalInt)("timeout", core.getInput("timeout"))
+        };
+        await (0, ftp_deploy_1.deploy)(args);
+    }
+    catch (error) {
+        core.setFailed(error);
+    }
 }
 runDeployment();
 
