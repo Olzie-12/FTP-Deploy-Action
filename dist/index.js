@@ -3255,12 +3255,7 @@ function connect(client, args, logger) {
 }
 function clearWorkingDir(client, dir) {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield client.removeFolder(dir);
-        }
-        catch (error) {
-            console.log(error);
-        }
+        yield client.removeFolder(dir).catch(() => { });
         // for (const file of await (dir == null ? client.list() : client.list(dir))) {
         //     console.log(file.name)
         //     if (file.name == null) continue;
