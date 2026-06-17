@@ -1,4 +1,5 @@
-import { optionalBoolean, optionalInt, optionalLogLevel, optionalProtocol, optionalSecurity, optionalString } from "./parse";
+import { optionalBoolean, optionalInt, optionalLogLevel, optionalProtocol, optionalString } from "./parse";
+import { describe, test, expect } from "@jest/globals";
 
 describe("boolean", () => {
     test("false", () => {

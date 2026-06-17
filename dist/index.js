@@ -29699,13 +29699,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -29756,14 +29766,19 @@ runDeployment();
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.optionalStringArray = exports.optionalInt = exports.optionalSecurity = exports.optionalLogLevel = exports.optionalProtocol = exports.optionalBoolean = exports.optionalString = void 0;
+exports.optionalString = optionalString;
+exports.optionalBoolean = optionalBoolean;
+exports.optionalProtocol = optionalProtocol;
+exports.optionalLogLevel = optionalLogLevel;
+exports.optionalSecurity = optionalSecurity;
+exports.optionalInt = optionalInt;
+exports.optionalStringArray = optionalStringArray;
 function optionalString(rawValue) {
     if (rawValue.length === 0) {
         return undefined;
     }
     return rawValue;
 }
-exports.optionalString = optionalString;
 function optionalBoolean(argumentName, rawValue) {
     if (rawValue.length === 0) {
         return undefined;
@@ -29777,7 +29792,6 @@ function optionalBoolean(argumentName, rawValue) {
     }
     throw new Error(`${argumentName}: invalid parameter - please use a boolean, you provided "${rawValue}". Try true or false instead.`);
 }
-exports.optionalBoolean = optionalBoolean;
 function optionalProtocol(argumentName, rawValue) {
     if (rawValue.length === 0) {
         return undefined;
@@ -29794,7 +29808,6 @@ function optionalProtocol(argumentName, rawValue) {
     }
     throw new Error(`${argumentName}: invalid parameter - you provided "${rawValue}". Try "ftp", "ftps", or "ftps-legacy" instead.`);
 }
-exports.optionalProtocol = optionalProtocol;
 function optionalLogLevel(argumentName, rawValue) {
     if (rawValue.length === 0) {
         return undefined;
@@ -29811,7 +29824,6 @@ function optionalLogLevel(argumentName, rawValue) {
     }
     throw new Error(`${argumentName}: invalid parameter - you provided "${rawValue}". Try "minimal", "standard", or "verbose" instead.`);
 }
-exports.optionalLogLevel = optionalLogLevel;
 function optionalSecurity(argumentName, rawValue) {
     if (rawValue.length === 0) {
         return undefined;
@@ -29825,7 +29837,6 @@ function optionalSecurity(argumentName, rawValue) {
     }
     throw new Error(`${argumentName}: invalid parameter - you provided "${rawValue}". Try "loose" or "strict" instead.`);
 }
-exports.optionalSecurity = optionalSecurity;
 function optionalInt(argumentName, rawValue) {
     if (rawValue.length === 0) {
         return undefined;
@@ -29836,7 +29847,6 @@ function optionalInt(argumentName, rawValue) {
     }
     throw new Error(`${argumentName}: invalid parameter - you provided "${rawValue}". Try a whole number (no decimals) instead like 1234`);
 }
-exports.optionalInt = optionalInt;
 function optionalStringArray(argumentName, rawValue) {
     if (rawValue.length === 0) {
         return undefined;
@@ -29846,7 +29856,6 @@ function optionalStringArray(argumentName, rawValue) {
     }
     return rawValue;
 }
-exports.optionalStringArray = optionalStringArray;
 
 
 /***/ }),
